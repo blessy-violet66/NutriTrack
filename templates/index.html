@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}NutriTrack – Eat Better. Track Smarter.{% endblock %}
+{% block body_class %}landing-body{% endblock %}
+
+{% block content %}
+<header class="landing-nav">
+  <div class="nav-container">
+    <a href="{{ url_for('index') }}" class="brand">
+      <span class="brand-mark"><i class="lucide salad"></i></span>
+      <span class="brand-text">NutriTrack</span>
+    </a>
+    <nav class="nav-links">
+      <a href="#features">Features</a>
+      <a href="#journey">How it works</a>
+      <a href="{{ url_for('login') }}" class="btn btn-ghost">Login</a>
+      <a href="{{ url_for('signup') }}" class="btn btn-primary">Get Started</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">
+      <i class="lucide menu"></i>
+    </button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="hero-grid">
+    <div class="hero-copy">
+      <span class="pill"><i class="lucide sparkle"></i> Your nutrition journey, made simple</span>
+      <h1>Eat Better. Track Smarter.<br /><span class="grad-text">Feel Better.</span></h1>
+      <p class="hero-sub">Track your food, understand your nutrition and build healthier eating habits — one meal at a time.</p>
+      <div class="hero-cta">
+        <a href="{{ url_for('signup') }}" class="btn btn-primary btn-lg">Get Started <i class="lucide arrow-right"></i></a>
+        <a href="{{ url_for('login') }}" class="btn btn-outline btn-lg">Login</a>
+      </div>
+      <div class="hero-stats">
+        <div><strong>16+</strong><span>foods built-in</span></div>
+        <div><strong>7-day</strong><span>weekly analytics</span></div>
+        <div><strong>Smart</strong><span>meal suggestions</span></div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="plate">
+        <div class="plate-ring"></div>
+        <div class="plate-core">
+          <span class="plate-emoji">🥗</span>
+          <span class="plate-label">Today's Plate</span>
+        </div>
+        <div class="float-chip chip-1"><span>🍎</span> 95 kcal</div>
+        <div class="float-chip chip-2"><span>🥚</span> 72 kcal</div>
+        <div class="float-chip chip-3"><span>🥛</span> 150 kcal</div>
+        <div class="float-chip chip-4"><span>🍌</span> 105 kcal</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="features">
+  <div class="section-head">
+    <h2>Everything you need to eat well</h2>
+    <p>Three simple tools that make healthy eating feel effortless.</p>
+  </div>
+  <div class="feature-grid">
+    <article class="feature-card">
+      <div class="feature-icon icon-purple"><i class="lucide utensils"></i></div>
+      <h3>Track Your Meals</h3>
+      <p>Log calories and nutrients from your daily meals in seconds.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-icon icon-mint"><i class="lucide chart-pie"></i></div>
+      <h3>Understand Your Nutrition</h3>
+      <p>See your weekly calorie and nutrition patterns through simple analytics.</p>
+    </article>
+    <article class="feature-card">
+      <div class="feature-icon icon-peach"><i class="lucide lightbulb"></i></div>
+      <h3>Get Smart Suggestions</h3>
+      <p>Receive personalized meal suggestions and feedback based on your intake.</p>
+    </article>
+  </div>
+</section>
+
+<section class="journey" id="journey">
+  <div class="section-head">
+    <h2>Your nutrition journey, made simple.</h2>
+    <p>From your first meal to your weekly insights — NutriTrack keeps it light and encouraging.</p>
+  </div>
+  <div class="journey-steps">
+    <div class="step"><span class="step-num">1</span><h4>Create your profile</h4><p>Tell us your goals and activity level. We estimate a daily calorie target for you.</p></div>
+    <div class="step-line"></div>
+    <div class="step"><span class="step-num">2</span><h4>Log your meals</h4><p>Quick-add from the built-in food list or enter your own. We total everything for you.</p></div>
+    <div class="step-line"></div>
+    <div class="step"><span class="step-num">3</span><h4>Track & improve</h4><p>Watch your weekly analytics, read supportive feedback and try smart meal ideas.</p></div>
+  </div>
+</section>
+
+<footer class="landing-footer">
+  <div class="footer-inner">
+    <div class="brand"><span class="brand-mark"><i class="lucide salad"></i></span><span class="brand-text">NutriTrack</span></div>
+    <p>Built for learning. Calorie estimates are for tracking purposes only — not medical advice.</p>
+  </div>
+</footer>
+{% endblock %}

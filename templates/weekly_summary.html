@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+{% block title %}Weekly Summary{% endblock %}
+{% block body_class %}app-body{% endblock %}
+
+{% block content %}
+{% include "partials/_sidebar.html" %}
+<div class="app-main">
+  {% include "partials/_topbar.html" %}
+  <main class="app-content">
+    <div class="page-head"><h2>Weekly Summary 📅</h2><p>A supportive look back at your week.</p></div>
+
+    <section class="card insights-card">
+      <div class="card-head"><h3><i class="lucide lightbulb"></i> Your Weekly Insights 💡</h3></div>
+      <div class="insights-body">
+        <div class="insight-item">
+          <span class="ii-icon">📊</span>
+          <p>This week you averaged <strong>{{ format_number(insights.avg_calories) }} kcal</strong> per day.</p>
+        </div>
+        <div class="insight-item">
+          <span class="ii-icon">🎯</span>
+          <p>You stayed close to your calorie target on <strong>{{ insights.near_target_days }} of {{ insights.logged_days }} logged days</strong>.</p>
+        </div>
+        <div class="insight-item">
+          <span class="ii-icon">🥩</span>
+          <p>Your average protein intake was <strong>{{ format_number(insights.avg_protein) }} g/day</strong>.</p>
+        </div>
+        {% if insights.highest_value > 0 %}
+        <div class="insight-item">
+          <span class="ii-icon">🔥</span>
+          <p><strong>{{ insights.highest_day }}</strong> had your highest calorie intake ({{ format_number(insights.highest_value) }} kcal).</p>
+        </div>
+        {% endif %}
+        {% if insights.lowest_value > 0 %}
+        <div class="insight-item">
+          <span class="ii-icon">🌿</span>
+          <p><strong>{{ insights.lowest_day }}</strong> was your lightest day ({{ format_number(insights.lowest_value) }} kcal).</p>
+        </div>
+        {% endif %}
+        <div class="insight-item">
+          <span class="ii-icon">🍽️</span>
+          <p>Your most frequently logged meal type was <strong>{{ insights.frequent_meal }}</strong>.</p>
+        </div>
+        <div class="insight-note">Small consistent steps matter. One day doesn't define your progress.</div>
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <div class="card-head"><h3><i class="lucide calendar-days"></i> This Week at a Glance</h3></div>
+      <canvas id="weeklyCaloriesChart" height="120"></canvas>
+    </section>
+
+    <section class="week-grid">
+      {% for d in week %}
+      <div class="day-card {% if d.calories == 0 %}empty{% endif %}">
+        <span class="day-label">{{ d.label }}</span>
+        <strong class="day-cal">{{ format_number(d.calories) }}</strong>
+        <span class="day-unit">kcal</span>
+        {% if d.calories > 0 %}
+        {% set dpct = (d.calories / targets.calories * 100) %}
+        <div class="day-bar"><div class="day-bar-fill" style="width: {{ [dpct, 100] | min }}%"></div></div>
+        <span class="day-count">{{ d.count }} items</span>
+        {% else %}
+        <span class="day-rest">No logs</span>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </section>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.NUTRI_WEEK = {{ week | tojson }};
+  window.NUTRI_TARGET = {{ targets.calories }};
+</script>
+{% endblock %}

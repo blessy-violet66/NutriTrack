@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Meal Suggestions{% endblock %}
+{% block body_class %}app-body{% endblock %}
+
+{% block content %}
+{% include "partials/_sidebar.html" %}
+<div class="app-main">
+  {% include "partials/_topbar.html" %}
+  <main class="app-content">
+    <div class="page-head"><h2>Meal Suggestions 💡</h2><p>Smart ideas based on what you've eaten today.</p></div>
+
+    <section class="remaining-card">
+      <div class="rc-main">
+        <span class="rc-label">Calories remaining today</span>
+        <strong class="rc-value">{{ format_number(remaining) }} kcal</strong>
+        <span class="rc-sub">of {{ format_number(targets.calories) }} kcal target</span>
+      </div>
+      <div class="rc-macros">
+        <div><span>Protein left</span><strong>{{ format_number([targets.protein - totals.protein, 0] | max) }} g</strong></div>
+        <div><span>Carbs left</span><strong>{{ format_number([targets.carbs - totals.carbs, 0] | max) }} g</strong></div>
+        <div><span>Fat left</span><strong>{{ format_number([targets.fat - totals.fat, 0] | max) }} g</strong></div>
+      </div>
+    </section>
+
+    <section class="suggestions-grid">
+      {% for m in suggestions %}
+      <article class="suggestion-card">
+        <div class="sug-top">
+          <span class="sug-icon">{{ m.icon }}</span>
+          <div>
+            <h4>{{ m.name }}</h4>
+            <span class="sug-meal">{{ m.meal_type }}</span>
+          </div>
+        </div>
+        <div class="sug-est">Estimated: <strong>{{ m.calories }} kcal</strong></div>
+        <div class="sug-macros">
+          <span>🥩 {{ m.protein }}g</span>
+          <span>🍞 {{ m.carbs }}g</span>
+          <span>🥑 {{ m.fat }}g</span>
+          <span>🌾 {{ m.fiber }}g</span>
+        </div>
+        {% if m.calories <= remaining + 50 %}
+        <span class="sug-fit">Fits your remaining calories</span>
+        {% else %}
+        <span class="sug-over">Higher than remaining calories</span>
+        {% endif %}
+        <form method="POST" action="{{ url_for('add_suggested_meal') }}">
+          <input type="hidden" name="food_name" value="{{ m.name }}" />
+          <input type="hidden" name="meal_type" value="{{ m.meal_type }}" />
+          <input type="hidden" name="calories" value="{{ m.calories }}" />
+          <input type="hidden" name="protein" value="{{ m.protein }}" />
+          <input type="hidden" name="carbs" value="{{ m.carbs }}" />
+          <input type="hidden" name="fat" value="{{ m.fat }}" />
+          <input type="hidden" name="fiber" value="{{ m.fiber }}" />
+          <button type="submit" class="btn btn-primary btn-block"><i class="lucide plus"></i> Add This Meal</button>
+        </form>
+      </article>
+      {% endfor %}
+    </section>
+
+    <p class="sug-disclaimer">Suggestions are approximate and for inspiration only. Choose what works for you.</p>
+  </main>
+</div>
+{% endblock %}

@@ -1,0 +1,83 @@
+{% extends "base.html" %}
+{% block title %}Profile{% endblock %}
+{% block body_class %}app-body{% endblock %}
+
+{% block content %}
+{% include "partials/_sidebar.html" %}
+<div class="app-main">
+  {% include "partials/_topbar.html" %}
+  <main class="app-content">
+    <div class="page-head"><h2>Your Profile 👤</h2><p>Keep your details up to date for accurate calorie estimates.</p></div>
+
+    <div class="profile-grid">
+      <section class="card profile-card-read">
+        <div class="card-head"><h3><i class="lucide user"></i> Current Details</h3></div>
+        <div class="profile-read">
+          <div class="pr-row"><span>Name</span><strong>{{ user.name }}</strong></div>
+          <div class="pr-row"><span>Email</span><strong>{{ user.email }}</strong></div>
+          <div class="pr-row"><span>Age</span><strong>{{ user.age }}</strong></div>
+          <div class="pr-row"><span>Gender</span><strong>{{ user.gender }}</strong></div>
+          <div class="pr-row"><span>Height</span><strong>{{ user.height }} cm</strong></div>
+          <div class="pr-row"><span>Weight</span><strong>{{ user.weight }} kg</strong></div>
+          <div class="pr-row"><span>Activity Level</span><strong>{{ user.activity_level }}</strong></div>
+          <div class="pr-row"><span>Goal</span><strong>{{ user.goal }}</strong></div>
+        </div>
+      </section>
+
+      <section class="card target-card">
+        <div class="card-head"><h3><i class="lucide target"></i> Estimated Daily Target</h3></div>
+        <div class="target-ring">
+          <div class="big-target">{{ format_number(calorie_target) }}<span>kcal/day</span></div>
+        </div>
+        <div class="target-macros">
+          <div><span>Protein</span><strong>{{ targets.protein }} g</strong></div>
+          <div><span>Carbs</span><strong>{{ targets.carbs }} g</strong></div>
+          <div><span>Fat</span><strong>{{ targets.fat }} g</strong></div>
+          <div><span>Fiber</span><strong>{{ targets.fiber }} g</strong></div>
+        </div>
+        <p class="target-note">Calorie needs vary between individuals. This estimate is for tracking purposes only and is not medical advice.</p>
+      </section>
+
+      <section class="card profile-card-edit">
+        <div class="card-head"><h3><i class="lucide pencil"></i> Update Profile</h3></div>
+        <form method="POST" class="auth-form signup-form">
+          <label class="field"><span>Full Name</span><input type="text" name="name" value="{{ user.name }}" required /></label>
+          <div class="field-row">
+            <label class="field"><span>Age</span><input type="number" name="age" min="10" max="120" value="{{ user.age }}" required /></label>
+            <label class="field">
+              <span>Gender</span>
+              <select name="gender" required>
+                <option value="Male" {{ 'selected' if user.gender == 'Male' }}>Male</option>
+                <option value="Female" {{ 'selected' if user.gender == 'Female' }}>Female</option>
+                <option value="Other" {{ 'selected' if user.gender == 'Other' }}>Other</option>
+              </select>
+            </label>
+          </div>
+          <div class="field-row">
+            <label class="field"><span>Height (cm)</span><input type="number" step="0.1" name="height" value="{{ user.height }}" required /></label>
+            <label class="field"><span>Weight (kg)</span><input type="number" step="0.1" name="weight" value="{{ user.weight }}" required /></label>
+          </div>
+          <label class="field">
+            <span>Activity Level</span>
+            <select name="activity_level" required>
+              <option value="Sedentary" {{ 'selected' if user.activity_level == 'Sedentary' }}>Sedentary</option>
+              <option value="Lightly Active" {{ 'selected' if user.activity_level == 'Lightly Active' }}>Lightly Active</option>
+              <option value="Moderately Active" {{ 'selected' if user.activity_level == 'Moderately Active' }}>Moderately Active</option>
+              <option value="Very Active" {{ 'selected' if user.activity_level == 'Very Active' }}>Very Active</option>
+            </select>
+          </label>
+          <label class="field">
+            <span>Goal</span>
+            <select name="goal">
+              <option value="Maintain Weight" {{ 'selected' if user.goal == 'Maintain Weight' }}>Maintain Weight</option>
+              <option value="Weight Loss" {{ 'selected' if user.goal == 'Weight Loss' }}>Weight Loss</option>
+              <option value="Weight Gain" {{ 'selected' if user.goal == 'Weight Gain' }}>Weight Gain</option>
+            </select>
+          </label>
+          <button type="submit" class="btn btn-primary btn-block btn-lg">Save Changes</button>
+        </form>
+      </section>
+    </div>
+  </main>
+</div>
+{% endblock %}

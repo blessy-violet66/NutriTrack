@@ -1,0 +1,14 @@
+<header class="topbar">
+  <button class="topbar-menu" id="topbarMenu" aria-label="Open menu"><i class="lucide menu"></i></button>
+  <div class="topbar-greet">
+    <h2>Good {{ greeting }}, {{ user.name.split(' ')[0] }}! 👋</h2>
+    <p>Let's make today's meals count.</p>
+  </div>
+  <div class="topbar-right">
+    <button class="icon-btn" aria-label="Notifications" id="notifBtn">
+      <i class="lucide bell"></i>
+      <span class="notif-dot"></span>
+    </button>
+    <div class="topbar-avatar">{{ user.name[0] | upper }}</div>
+  </div>
+</header>

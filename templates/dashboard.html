@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+{% block title %}Dashboard{% endblock %}
+{% block body_class %}app-body{% endblock %}
+
+{% block content %}
+{% include "partials/_sidebar.html" %}
+
+<div class="app-main">
+  {% include "partials/_topbar.html" %}
+
+  <main class="app-content">
+    <!-- Summary cards -->
+    <section class="summary-grid">
+      {% set cards = [
+        {'key':'calories','label':'Calories Today','icon':'flame','unit':'kcal','value':totals.calories,'target':targets.calories,'emoji':'🔥'},
+        {'key':'protein','label':'Protein','icon':'beef','unit':'g','value':totals.protein,'target':targets.protein,'emoji':'🥩'},
+        {'key':'carbs','label':'Carbohydrates','icon':'wheat','unit':'g','value':totals.carbs,'target':targets.carbs,'emoji':'🍞'},
+        {'key':'fat','label':'Fats','icon':'droplet','unit':'g','value':totals.fat,'target':targets.fat,'emoji':'🥑'}
+      ] %}
+      {% for c in cards %}
+      <div class="summary-card" data-macro="{{ c.key }}">
+        <div class="sc-top">
+          <span class="sc-icon">{{ c.emoji }}</span>
+          <span class="sc-label">{{ c.label }}</span>
+        </div>
+        <div class="sc-value">
+          <strong>{{ format_number(c.value) }}</strong>
+          <span>/ {{ format_number(c.target) }} {{ c.unit }}</span>
+        </div>
+        <div class="sc-bar">
+          {% set pct = (c.value / c.target * 100) if c.target else 0 %}
+          <div class="sc-bar-fill" style="width: {{ [pct, 100] | min }}%"></div>
+        </div>
+        <div class="sc-status">
+          {% if pct < 80 %}<span class="tag tag-warn">Low</span>
+          {% elif pct > 115 %}<span class="tag tag-high">High</span>
+          {% else %}<span class="tag tag-ok">On track</span>{% endif %}
+          <span class="sc-pct">{{ pct | round(0) | int }}%</span>
+        </div>
+      </div>
+      {% endfor %}
+    </section>
+
+    <div class="dash-columns">
+      <!-- Today's Nutrition ring -->
+      <section class="card ring-card">
+        <div class="card-head">
+          <h3><i class="lucide gauge"></i> Today's Nutrition</h3>
+          <span class="card-date">{{ today_label }}</span>
+        </div>
+        <div class="ring-wrap">
+          <div class="ring">
+            <svg viewBox="0 0 200 200" class="ring-svg">
+              <circle cx="100" cy="100" r="86" class="ring-bg" />
+              <circle cx="100" cy="100" r="86" class="ring-fg" id="caloriesRing"
+                style="stroke-dasharray: 540; stroke-dashoffset: 540;" />
+            </svg>
+            <div class="ring-center">
+              <strong>{{ format_number(totals.calories) }}</strong>
+              <span>of {{ format_number(targets.calories) }} kcal</span>
+            </div>
+          </div>
+          <div class="ring-side">
+            <div class="ring-stat">
+              <span class="rs-label">Remaining</span>
+              <strong class="rs-value">{{ format_number(remaining) }} kcal</strong>
+            </div>
+            {% set bars = [
+              {'label':'Protein','value':totals.protein,'target':targets.protein,'color':'var(--protein)'},
+              {'label':'Carbs','value':totals.carbs,'target':targets.carbs,'color':'var(--carbs)'},
+              {'label':'Fat','value':totals.fat,'target':targets.fat,'color':'var(--fat)'}
+            ] %}
+            {% for b in bars %}
+            {% set b_pct = (b.value / b.target * 100) if b.target else 0 %}
+            <div class="mini-bar">
+              <div class="mb-top"><span>{{ b.label }}</span><span>{{ format_number(b.value) }} / {{ format_number(b.target) }} g</span></div>
+              <div class="mb-track"><div class="mb-fill" style="width: {{ [b_pct, 100] | min }}%; background: {{ b.color }}"></div></div>
+            </div>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+
+      <!-- Nutrition status / feedback -->
+      <section class="card feedback-card feedback-{{ feedback.tone }}">
+        <div class="card-head">
+          <h3><i class="lucide {{ 'smile' if status == 'balanced' else 'alert-triangle' }}"></i> Nutrition Status</h3>
+        </div>
+        <div class="feedback-body">
+          <div class="fb-icon">{{ feedback.icon }}</div>
+          <div class="fb-content">
+            <h4>{{ feedback.title }}</h4>
+            <p>{{ feedback.message }}</p>
+            {% if status == 'balanced' %}
+            <div class="reward-badge"><span>{{ feedback.suggestion_icon }}</span> {{ feedback.suggestion_title }}: {{ feedback.suggestion }}</div>
+            {% else %}
+            <div class="suggestion-box">
+              <div class="sb-head"><span>{{ feedback.suggestion_icon }}</span> {{ feedback.suggestion_title }}</div>
+              <div class="sb-name">{{ feedback.suggestion }}</div>
+              {% if feedback.suggestion_calories %}<div class="sb-cal">~{{ feedback.suggestion_calories }} kcal</div>{% endif %}
+              <a href="{{ url_for('meal_suggestions') }}" class="btn btn-soft btn-sm">See more ideas <i class="lucide arrow-right"></i></a>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <!-- Log Your Food -->
+    <section class="card log-card">
+      <div class="card-head">
+        <h3><i class="lucide utensils"></i> Log Your Food 🍎</h3>
+        <button class="btn btn-soft btn-sm" id="toggleFoodForm"><i class="lucide plus"></i> Add food</button>
+      </div>
+
+      <form id="foodForm" class="food-form {% if request.args.get('open') != '1' %}collapsed{% endif %}" method="POST" action="{{ url_for('add_food') }}">
+        <div class="ff-row">
+          <label class="field">
+            <span>Food Name</span>
+            <input type="text" name="food_name" id="foodName" placeholder="e.g. 2 Eggs + Toast" required list="builtinFoods" />
+            <datalist id="builtinFoods"></datalist>
+          </label>
+          <label class="field">
+            <span>Meal Type</span>
+            <select name="meal_type" id="mealType" required>
+              <option value="Breakfast">🍳 Breakfast</option>
+              <option value="Lunch">🍛 Lunch</option>
+              <option value="Snack">🍪 Snack</option>
+              <option value="Dinner">🍽️ Dinner</option>
+            </select>
+          </label>
+        </div>
+        <div class="ff-row ff-grid-5">
+          <label class="field"><span>Calories</span><input type="number" name="calories" id="fCalories" step="0.1" min="0" placeholder="0" required /></label>
+          <label class="field"><span>Protein (g)</span><input type="number" name="protein" id="fProtein" step="0.1" min="0" placeholder="0" required /></label>
+          <label class="field"><span>Carbs (g)</span><input type="number" name="carbs" id="fCarbs" step="0.1" min="0" placeholder="0" required /></label>
+          <label class="field"><span>Fat (g)</span><input type="number" name="fat" id="fFat" step="0.1" min="0" placeholder="0" required /></label>
+          <label class="field"><span>Fiber (g)</span><input type="number" name="fiber" id="fFiber" step="0.1" min="0" placeholder="0" /></label>
+        </div>
+        <div class="ff-actions">
+          <span class="ff-hint">Values from the built-in list are approximate — feel free to adjust.</span>
+          <button type="submit" class="btn btn-primary"><i class="lucide plus"></i> Add Food</button>
+        </div>
+      </form>
+    </section>
+
+    <!-- Today's entries -->
+    <section class="entries-section">
+      <div class="entries-head">
+        <h3><i class="lucide list"></i> Today's Meals</h3>
+        <span class="entries-count">{{ entries | length }} logged</span>
+      </div>
+      {% if entries %}
+      <div class="entries-grid">
+        {% for e in entries %}
+        <article class="entry-card">
+          <div class="entry-top">
+            <span class="entry-meal">
+              {% if e.meal_type == 'Breakfast' %}🍳{% elif e.meal_type == 'Lunch' %}🍛{% elif e.meal_type == 'Snack' %}🍪{% else %}🍽️{% endif %}
+              {{ e.meal_type }}
+            </span>
+            <span class="entry-cal">{{ format_number(e.calories) }} kcal</span>
+          </div>
+          <h4 class="entry-name">{{ e.food_name }}</h4>
+          <div class="entry-macros">
+            <span>🥩 {{ format_number(e.protein) }}g</span>
+            <span>🍞 {{ format_number(e.carbs) }}g</span>
+            <span>🥑 {{ format_number(e.fat) }}g</span>
+            <span>🌾 {{ format_number(e.fiber) }}g</span>
+          </div>
+          <div class="entry-actions">
+            <a href="{{ url_for('edit_food', entry_id=e.id) }}" class="btn btn-ghost btn-sm"><i class="lucide pencil"></i> Edit</a>
+            <form method="POST" action="{{ url_for('delete_food', entry_id=e.id) }}" class="inline" onsubmit="return confirm('Delete this entry?')">
+              <button class="btn btn-ghost btn-sm danger"><i class="lucide trash-2"></i> Delete</button>
+            </form>
+          </div>
+        </article>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="empty-state">
+        <div class="empty-emoji">🍎</div>
+        <h4>No meals logged yet</h4>
+        <p>Start by adding your breakfast — tap "Add food" above.</p>
+      </div>
+      {% endif %}
+    </section>
+  </main>
+</div>
+
+<canvas id="confettiCanvas" class="confetti-canvas"></canvas>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.NUTRI = {
+    calories: {{ totals.calories }},
+    target: {{ targets.calories }},
+    status: "{{ status }}"
+  };
+</script>
+{% endblock %}

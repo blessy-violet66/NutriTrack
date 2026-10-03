@@ -1,0 +1,31 @@
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-head">
+    <a href="{{ url_for('dashboard') }}" class="brand">
+      <span class="brand-mark"><i class="lucide salad"></i></span>
+      <span class="brand-text">NutriTrack</span>
+    </a>
+    <button class="sidebar-close" id="sidebarClose" aria-label="Close sidebar"><i class="lucide x"></i></button>
+  </div>
+  <nav class="sidebar-nav">
+    {% set menu = [
+      ('dashboard', 'Dashboard', 'layout-dashboard', url_for('dashboard')),
+      ('dashboard', 'Log Food', 'utensils', url_for('dashboard') + '?open=1'),
+      ('analytics', 'Nutrition Analytics', 'chart-pie', url_for('analytics')),
+      ('weekly-summary', 'Weekly Summary', 'calendar-days', url_for('weekly_summary')),
+      ('meal-suggestions', 'Meal Suggestions', 'lightbulb', url_for('meal_suggestions')),
+      ('profile', 'Profile', 'user', url_for('profile'))
+    ] %}
+    {% for page, label, icon, href in menu %}
+    <a href="{{ href }}" class="nav-item {{ 'active' if active_page == page and label != 'Log Food' }} {{ 'active' if active_page == 'dashboard' and label == 'Log Food' and request.args.get('open') == '1' }}">
+      <i class="lucide {{ icon }}"></i>
+      <span>{{ label }}</span>
+    </a>
+    {% endfor %}
+  </nav>
+  <div class="sidebar-foot">
+    <a href="{{ url_for('logout') }}" class="nav-item logout">
+      <i class="lucide log-out"></i><span>Logout</span>
+    </a>
+  </div>
+</aside>
+<div class="sidebar-overlay" id="sidebarOverlay"></div>

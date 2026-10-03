@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+{% block title %}Nutrition Analytics{% endblock %}
+{% block body_class %}app-body{% endblock %}
+
+{% block content %}
+{% include "partials/_sidebar.html" %}
+<div class="app-main">
+  {% include "partials/_topbar.html" %}
+  <main class="app-content">
+    <div class="page-head"><h2>Your Weekly Nutrition 📊</h2><p>A clear look at your eating patterns this week.</p></div>
+
+    <section class="stat-row">
+      <div class="stat-card">
+        <span class="stat-emoji">📊</span>
+        <div><strong>{{ format_number(insights.avg_calories) }}</strong><span>kcal/day average</span></div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">🎯</span>
+        <div><strong>{{ format_number(targets.calories) }}</strong><span>daily target</span></div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">✅</span>
+        <div><strong>{{ insights.near_target_days }} / 7</strong><span>days near target</span></div>
+      </div>
+      <div class="stat-card">
+        <span class="stat-emoji">🥩</span>
+        <div><strong>{{ format_number(insights.avg_protein) }} g</strong><span>avg protein/day</span></div>
+      </div>
+    </section>
+
+    <section class="card chart-card">
+      <div class="card-head"><h3><i class="lucide trending-up"></i> Daily Calorie Intake</h3></div>
+      <canvas id="caloriesChart" height="120"></canvas>
+    </section>
+
+    <div class="chart-grid">
+      <section class="card chart-card">
+        <div class="card-head"><h3><i class="lucide beef"></i> Protein Intake (g)</h3></div>
+        <canvas id="proteinChart" height="160"></canvas>
+      </section>
+      <section class="card chart-card">
+        <div class="card-head"><h3><i class="lucide wheat"></i> Carbohydrate Intake (g)</h3></div>
+        <canvas id="carbsChart" height="160"></canvas>
+      </section>
+      <section class="card chart-card">
+        <div class="card-head"><h3><i class="lucide droplet"></i> Fat Intake (g)</h3></div>
+        <canvas id="fatChart" height="160"></canvas>
+      </section>
+      <section class="card chart-card">
+        <div class="card-head"><h3><i class="lucide chart-pie"></i> Macro Breakdown</h3></div>
+        <canvas id="macroDonut" height="160"></canvas>
+      </section>
+    </div>
+  </main>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  window.NUTRI_WEEK = {{ week | tojson }};
+  window.NUTRI_TARGET = {{ targets.calories }};
+</script>
+{% endblock %}

@@ -1,0 +1,99 @@
+{% extends "base.html" %}
+{% block title %}Create Account{% endblock %}
+{% block body_class %}auth-body{% endblock %}
+
+{% block content %}
+<div class="auth-wrap">
+  <div class="auth-card wide">
+    <div class="auth-side">
+      <div class="auth-art">
+        <div class="plate small"><div class="plate-ring"></div><div class="plate-core"><span class="plate-emoji">🥗</span></div></div>
+        <h2>Start your journey</h2>
+        <p>Create your free account and begin tracking your meals today. It only takes a minute.</p>
+        <div class="auth-chips">
+          <span class="auth-chip">🍎</span><span class="auth-chip">🥚</span><span class="auth-chip">🥑</span><span class="auth-chip">🍇</span>
+        </div>
+      </div>
+    </div>
+    <div class="auth-form-side">
+      <a href="{{ url_for('index') }}" class="brand brand-sm">
+        <span class="brand-mark"><i class="lucide salad"></i></span>
+        <span class="brand-text">NutriTrack</span>
+      </a>
+      <h1>Create Account</h1>
+      <p class="auth-sub">Let's set up your nutrition profile 🌱</p>
+      <form method="POST" class="auth-form signup-form" novalidate>
+        <label class="field">
+          <span>Full Name</span>
+          <input type="text" name="name" placeholder="Jane Doe" required value="{{ form.name if form else '' }}" />
+        </label>
+        <label class="field">
+          <span>Email</span>
+          <input type="email" name="email" placeholder="you@example.com" required value="{{ form.email if form else '' }}" />
+        </label>
+        <div class="field-row">
+          <label class="field">
+            <span>Password</span>
+            <div class="pwd-wrap">
+              <input type="password" name="password" id="signupPassword" placeholder="Min 6 characters" required />
+              <button type="button" class="pwd-toggle" data-target="signupPassword" aria-label="Show password"><i class="lucide eye"></i></button>
+            </div>
+          </label>
+          <label class="field">
+            <span>Confirm Password</span>
+            <div class="pwd-wrap">
+              <input type="password" name="confirm_password" id="signupConfirm" placeholder="Repeat password" required />
+              <button type="button" class="pwd-toggle" data-target="signupConfirm" aria-label="Show password"><i class="lucide eye"></i></button>
+            </div>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span>Age</span>
+            <input type="number" name="age" min="10" max="120" placeholder="25" required value="{{ form.age if form else '' }}" />
+          </label>
+          <label class="field">
+            <span>Gender</span>
+            <select name="gender" required>
+              <option value="">Select…</option>
+              <option value="Male" {{ 'selected' if form and form.get('gender') == 'Male' }}>Male</option>
+              <option value="Female" {{ 'selected' if form and form.get('gender') == 'Female' }}>Female</option>
+              <option value="Other" {{ 'selected' if form and form.get('gender') == 'Other' }}>Other</option>
+            </select>
+          </label>
+        </div>
+        <div class="field-row">
+          <label class="field">
+            <span>Height (cm)</span>
+            <input type="number" name="height" step="0.1" placeholder="170" required value="{{ form.height if form else '' }}" />
+          </label>
+          <label class="field">
+            <span>Weight (kg)</span>
+            <input type="number" name="weight" step="0.1" placeholder="65" required value="{{ form.weight if form else '' }}" />
+          </label>
+        </div>
+        <label class="field">
+          <span>Daily Activity Level</span>
+          <select name="activity_level" required>
+            <option value="">Select…</option>
+            <option value="Sedentary" {{ 'selected' if form and form.get('activity_level') == 'Sedentary' }}>Sedentary</option>
+            <option value="Lightly Active" {{ 'selected' if form and form.get('activity_level') == 'Lightly Active' }}>Lightly Active</option>
+            <option value="Moderately Active" {{ 'selected' if form and form.get('activity_level') == 'Moderately Active' }}>Moderately Active</option>
+            <option value="Very Active" {{ 'selected' if form and form.get('activity_level') == 'Very Active' }}>Very Active</option>
+          </select>
+        </label>
+        <label class="field">
+          <span>Goal (optional)</span>
+          <select name="goal">
+            <option value="Maintain Weight" {{ 'selected' if form and form.get('goal') == 'Maintain Weight' }}>Maintain Weight</option>
+            <option value="Weight Loss" {{ 'selected' if form and form.get('goal') == 'Weight Loss' }}>Weight Loss</option>
+            <option value="Weight Gain" {{ 'selected' if form and form.get('goal') == 'Weight Gain' }}>Weight Gain</option>
+          </select>
+        </label>
+        <button type="submit" class="btn btn-primary btn-block btn-lg">Create Account</button>
+      </form>
+      <p class="auth-switch">Already have an account? <a href="{{ url_for('login') }}">Login</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

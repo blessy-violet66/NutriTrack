@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% block title %}Edit Food{% endblock %}
+{% block body_class %}app-body{% endblock %}
+
+{% block content %}
+{% include "partials/_sidebar.html" %}
+<div class="app-main">
+  {% include "partials/_topbar.html" %}
+  <main class="app-content">
+    <div class="page-head">
+      <a href="{{ url_for('dashboard') }}" class="back-link"><i class="lucide arrow-left"></i> Back to Dashboard</a>
+    </div>
+    <section class="card log-card narrow">
+      <div class="card-head"><h3><i class="lucide pencil"></i> Edit Food Entry</h3></div>
+      <form class="food-form" method="POST" action="{{ url_for('edit_food', entry_id=entry.id) }}">
+        <div class="ff-row">
+          <label class="field"><span>Food Name</span><input type="text" name="food_name" value="{{ entry.food_name }}" required /></label>
+          <label class="field">
+            <span>Meal Type</span>
+            <select name="meal_type" required>
+              <option value="Breakfast" {{ 'selected' if entry.meal_type == 'Breakfast' }}>🍳 Breakfast</option>
+              <option value="Lunch" {{ 'selected' if entry.meal_type == 'Lunch' }}>🍛 Lunch</option>
+              <option value="Snack" {{ 'selected' if entry.meal_type == 'Snack' }}>🍪 Snack</option>
+              <option value="Dinner" {{ 'selected' if entry.meal_type == 'Dinner' }}>🍽️ Dinner</option>
+            </select>
+          </label>
+        </div>
+        <div class="ff-row ff-grid-5">
+          <label class="field"><span>Calories</span><input type="number" step="0.1" min="0" name="calories" value="{{ entry.calories }}" required /></label>
+          <label class="field"><span>Protein (g)</span><input type="number" step="0.1" min="0" name="protein" value="{{ entry.protein }}" required /></label>
+          <label class="field"><span>Carbs (g)</span><input type="number" step="0.1" min="0" name="carbs" value="{{ entry.carbs }}" required /></label>
+          <label class="field"><span>Fat (g)</span><input type="number" step="0.1" min="0" name="fat" value="{{ entry.fat }}" required /></label>
+          <label class="field"><span>Fiber (g)</span><input type="number" step="0.1" min="0" name="fiber" value="{{ entry.fiber }}" /></label>
+        </div>
+        <div class="ff-actions">
+          <a href="{{ url_for('dashboard') }}" class="btn btn-ghost">Cancel</a>
+          <button type="submit" class="btn btn-primary"><i class="lucide save"></i> Save Changes</button>
+        </div>
+      </form>
+    </section>
+  </main>
+</div>
+{% endblock %}
