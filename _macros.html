@@ -1,0 +1,25 @@
+{# Veg / non-veg symbol: green circle in a square = veg, red triangle in a square = non-veg #}
+{% macro mark(cat) %}
+<svg class="mark" width="16" height="16" viewBox="0 0 16 16" role="img"
+     aria-label="{{ 'Vegetarian' if cat == 'veg' else 'Non-vegetarian' }}">
+  <rect x="1" y="1" width="14" height="14" rx="2" fill="#fff"
+        stroke="{{ '#2e7d32' if cat == 'veg' else '#c62828' }}" stroke-width="1.5"/>
+  {% if cat == 'veg' %}
+  <circle cx="8" cy="8" r="4" fill="#2e7d32"/>
+  {% else %}
+  <path d="M8 4 L12.5 12 H3.5 Z" fill="#c62828"/>
+  {% endif %}
+</svg>
+{% endmacro %}
+
+{# Thin bar showing how a meal's calories split into protein / carbs / fat #}
+{% macro strip(p, c, f) %}
+{% set total = p * 4 + c * 4 + f * 9 %}
+{% if total > 0 %}
+<div class="strip" title="Share of calories from protein, carbs and fat">
+  <span class="seg-p" style="width: {{ (p * 4 / total * 100)|round(1) }}%"></span>
+  <span class="seg-c" style="width: {{ (c * 4 / total * 100)|round(1) }}%"></span>
+  <span class="seg-f" style="width: {{ (f * 9 / total * 100)|round(1) }}%"></span>
+</div>
+{% endif %}
+{% endmacro %}
